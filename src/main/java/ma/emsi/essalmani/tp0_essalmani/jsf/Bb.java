@@ -116,24 +116,27 @@ public class Bb implements Serializable {
      */
     public String envoyer() {
         if (question == null || question.isBlank()) {
-            // Erreur ! Le formulaire va être réaffiché en réponse à la requête POST, avec un message d'erreur.
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Texte question vide", "Il manque le texte de la question");
             facesContext.addMessage(null, message);
             return null;
         }
-        // Entourer la réponse avec "||".
-        this.reponse = "||";
-        // Si la conversation n'a pas encore commencé, ajouter le rôle système au début de la réponse
-        if (this.conversation.isEmpty()) {
-            // Ajouter le rôle système au début de la réponse
-            this.reponse += roleSysteme.toUpperCase(Locale.FRENCH) + "\n";
-            // Invalide le bouton pour changer le rôle système
-            this.roleSystemeChangeable = false;
-        }
-        this.reponse += question.toLowerCase(Locale.FRENCH) + "||";
-        // La conversation contient l'historique des questions-réponses depuis le début.
+
+        int nbCaracteres = question.length();
+
+
+        long nbVoyelles = question.toLowerCase().chars()
+                .filter(c -> "aeiouyàâäéèêëîïôöùûü".indexOf(c) >= 0)
+                .count();
+
+        int nbMots = question.trim().split("\\s+").length;
+
+        this.reponse = "Nombre de caractères : " + nbCaracteres + "\n" +
+                "Nombre de voyelles : " + nbVoyelles + "\n" +
+                "Nombre de mots : " + nbMots;
+
         afficherConversation();
+
         return null;
     }
 
